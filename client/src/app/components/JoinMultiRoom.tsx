@@ -1,7 +1,9 @@
 import { useState } from "react";
 import io from "socket.io-client";
 
-const socket = io("http://localhost:3001");
+const server  = process.env.WEBSOCKET_SERVER as string;
+
+const socket = io(server);
 
 const JoinMultiRoom = ({ showJoinRoom, setShowJoinRoom }: any) => {
   const [username, setUsername] = useState("");
