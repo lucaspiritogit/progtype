@@ -9,21 +9,27 @@ const io = require("socket.io")(server, {
     origin: process.env.CORS_ORIGIN
   }
 });
-console.log(process.env.CORS_ORIGIN);
 const connections = new Set()
 
 io.on("connection", function(socket) {
   console.log("New client connected " + socket.id);
   connections.add(socket.id,)
 
-  socket.on("type", function(data) {
-      io.emit("type", data);
-  });
-
   socket.on("join-room", function(roomId) {
     socket.join(roomId)
     console.log("Client: " + socket.id + " connected to room with id: " + roomId)
   })
+
+  socket.on("sendTypeValue", function(data) {
+      io.to(data.roomId).emit("receiveTypeValue", data);
+
+    });
+
+
+  socket.on("sendTypeValueP1", function(data) {
+    io.to(data.roomId).emit("receiveTypeValueP1", data);
+
+  });
 
   socket.on("disconnect", () => {
     console.log("Client disconnected: " + socket.id)
