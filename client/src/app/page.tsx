@@ -2,6 +2,7 @@
 import { useState, useMemo, useEffect } from "react";
 import CodeEditor from "./components/CodeEditor";
 import { snippets } from "../../public/codeSnippets";
+import Navbar from "./components/Navbar";
 
 export default function Home() {
   const [selectedLanguage, setSelectedLanguage] = useState("javascript");
@@ -41,8 +42,10 @@ export default function Home() {
 
   return (
     <div>
-      <div className="flex flex-col items-center justify-center p-10">
+      <div className="flex items-center justify-center">
         <h1 className="m-1 text-4xl">Progtype</h1>
+      </div>
+      <div className="flex flex-col items-center justify-center p-5">
         <p className="m-0">
           Use tab to indent correctly, spaces comming soon ™️
         </p>
