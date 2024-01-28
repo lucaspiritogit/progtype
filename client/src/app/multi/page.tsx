@@ -2,6 +2,7 @@
 import { useState, useMemo, useEffect } from "react";
 import CodeEditor from "../components/CodeEditor";
 import MultiCodeEditor from "../components/MultiCodeEditor";
+import MultiCodeEditorP1 from "../components/MultiCodeEditorP1";
 import { snippets } from "../../../public/codeSnippets";
 import JoinMultiRoom from "../components/JoinMultiRoom";
 
@@ -9,6 +10,9 @@ export default function Home() {
   const [selectedLanguage, setSelectedLanguage] = useState("javascript");
   const [randomIndex, setRandomIndex] = useState(0);
   const [showJoinRoom, setShowJoinRoom] = useState(true)
+  const [roomId, setRoomId] = useState("");
+  const [socket, setSocket] = useState(null);
+  const [isPlayer1, setIsPlayer1] = useState(false);
 
 
   const handleLanguageChange = (e: any) => {
@@ -49,6 +53,8 @@ export default function Home() {
         <JoinMultiRoom
           showJoinRoom={showJoinRoom}
           setShowJoinRoom={setShowJoinRoom}
+          setRoomId={setRoomId}
+          setSocket={setSocket}
         />
       ) : (
         <>
@@ -75,10 +81,12 @@ export default function Home() {
           </div>
           <div className="flex w-full">
             <div className="w-[50%]">
-              <CodeEditor
+            <MultiCodeEditorP1
                 codeSnippet={codeSpacesReplacedWithTabs.split("")}
                 onNextSnippet={handleNextSnippet}
                 selectedLanguage={selectedLanguage}
+                roomId={roomId}
+                socket={socket}
               />
             </div>
             <div className="w-[50%]">
@@ -86,6 +94,8 @@ export default function Home() {
                 codeSnippet={codeSpacesReplacedWithTabs.split("")}
                 onNextSnippet={handleNextSnippet}
                 selectedLanguage={selectedLanguage}
+                roomId={roomId}
+                socket={socket}
               />
             </div>
           </div>

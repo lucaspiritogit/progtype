@@ -2,16 +2,20 @@ import { useState } from "react";
 import io from "socket.io-client";
 
 const server  = process.env.NEXT_PUBLIC_WEBSOCKET_SERVER as string;
-const socket = io(server);
+const socket = io(server, {
+  autoConnect: false
+});
 
 
-const JoinMultiRoom = ({ showJoinRoom, setShowJoinRoom }: any) => {
+const JoinMultiRoom = ({ showJoinRoom, setShowJoinRoom, setRoomId, setSocket }: any) => {
   const [username, setUsername] = useState("");
   const [roomId, setRoom] = useState("");
 
   const joinRoom = () => {
     if (username !== "" && roomId !== "") {
       socket.emit("join-room", roomId);
+      setSocket(socket)
+      setRoomId(roomId)
       setShowJoinRoom(false);
     }
   };
@@ -30,7 +34,7 @@ const JoinMultiRoom = ({ showJoinRoom, setShowJoinRoom }: any) => {
               placeholder="username"
               className="p-2 text-black"
               onChange={(e) => {
-                setRoom(e.target.value);
+                setUsername(e.target.value);
               }}
             />
             <label htmlFor="room">Room id</label>
@@ -41,7 +45,7 @@ const JoinMultiRoom = ({ showJoinRoom, setShowJoinRoom }: any) => {
               placeholder="room id"
               className="p-2 text-black"
               onChange={(e) => {
-                setUsername(e.target.value);
+                setRoom(e.target.value);
               }}
             />
             <button className="p-2" onClick={joinRoom}>

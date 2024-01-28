@@ -12,14 +12,14 @@ type CodeEditorProps = {
 
 type ColorStatus = "correct" | "incorrect" | "not-reached";
 
-const MultiCodeEditor = ({
+const MultiCodeEditorP1 = ({
   codeSnippet,
   onNextSnippet,
   selectedLanguage,
   roomId,
   socket,
 }: CodeEditorProps) => {
-  const [userInput, setUserInput] = useState("");
+  const [userInputP1, setUserInputP1] = useState("");
   const inputRef = useRef<any | null>(null);
   const [typingStarted, setTypingStarted] = useState(false);
   const [typingEnded, setTypingEnded] = useState(false);
@@ -30,17 +30,17 @@ const MultiCodeEditor = ({
 
   useEffect(() => {
     socket.connect()
-    socket.on("receiveTypeValue", (message: any) => {
-      setUserInput(message.value);
+    socket.on("receiveTypeValueP1", (message: any) => {
+      setUserInputP1(message.value);
     });
 
     return () => {
-      socket.off("receiveTypeValue");
+      socket.off("receiveTypeValueP1");
     };
   }, [socket]);
 
   useEffect(() => {
-    setUserInput("");
+    setUserInputP1("");
     setTypingStarted(false);
     setTypingEnded(false);
     setResetTimer(false);
@@ -50,14 +50,14 @@ const MultiCodeEditor = ({
     let newCorrectChars = 0;
     let newIncorrectChars = 0;
     for (let i = 0; i < codeSnippet.length; i++) {
-      if (userInput[i] === codeSnippet[i]) {
+      if (userInputP1[i] === codeSnippet[i]) {
         newCorrectChars++;
       } else {
         newIncorrectChars++;
       }
     }
 
-    const totalCharsTyped = userInput.length;
+    const totalCharsTyped = userInputP1.length;
     const precisionPercentage =
       totalCharsTyped === 0
         ? 100
@@ -66,7 +66,7 @@ const MultiCodeEditor = ({
     setCorrectChars(newCorrectChars);
     setErrors(newIncorrectChars);
     setPrecision(precisionPercentage);
-  }, [userInput, codeSnippet]);
+  }, [userInputP1, codeSnippet]);
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLTextAreaElement>,
@@ -78,13 +78,13 @@ const MultiCodeEditor = ({
     const cursorPosition = e.target.selectionStart;
     const typedValueByUser = e.target.value;
 
-    setUserInput(typedValueByUser);
+    setUserInputP1(typedValueByUser);
 
     if (typedValueByUser.length === codeSnippet.length) {
       setTypingEnded(true);
     }
 
-    socket.emit("sendTypeValue", {
+    socket.emit("sendTypeValueP1", {
       value: typedValueByUser,
       roomId: roomId,
       userId: socket.id,
@@ -93,7 +93,7 @@ const MultiCodeEditor = ({
   };
 
   const handleNextSnippetButton = () => {
-    setUserInput("");
+    setUserInputP1("");
     setTypingEnded(false);
     setTypingStarted(false);
     setResetTimer(true);
@@ -107,15 +107,15 @@ const MultiCodeEditor = ({
     codeSnippetIndex: number,
     char: any,
   ): ColorStatus => {
-    if (codeSnippetIndex < userInput.length) {
-      return userInput[codeSnippetIndex] === char ? "correct" : "incorrect";
+    if (codeSnippetIndex < userInputP1.length) {
+      return userInputP1[codeSnippetIndex] === char ? "correct" : "incorrect";
     } else {
       return "not-reached";
     }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (codeSnippet[userInput.length] === "\t" && e.key !== "Tab") {
+    if (codeSnippet[userInputP1.length] === "\t" && e.key !== "Tab") {
       if (e.key !== "Backspace") {
         e.preventDefault();
       }
@@ -124,16 +124,16 @@ const MultiCodeEditor = ({
     if (e.key === "Tab") {
       e.preventDefault();
 
-      if (codeSnippet[userInput.length] !== "\t") {
+      if (codeSnippet[userInputP1.length] !== "\t") {
         e.preventDefault();
       } else {
         const { selectionStart, selectionEnd } = e.currentTarget;
         const newInput =
-          userInput.substring(0, selectionStart) +
+          userInputP1.substring(0, selectionStart) +
           "\t" +
-          userInput.substring(selectionEnd);
+          userInputP1.substring(selectionEnd);
 
-        setUserInput(newInput);
+        setUserInputP1(newInput);
 
         const newCursorPosition = selectionStart + 1;
         inputRef.current!.setSelectionRange(
@@ -141,13 +141,13 @@ const MultiCodeEditor = ({
           newCursorPosition,
         );
       }
-    } else if (codeSnippet[userInput.length] === "\n" && e.key !== "Enter") {
+    } else if (codeSnippet[userInputP1.length] === "\n" && e.key !== "Enter") {
       if (e.key !== "Backspace") {
         e.preventDefault();
       }
-    } else if (codeSnippet[userInput.length] !== "\n" && e.key === "Enter") {
+    } else if (codeSnippet[userInputP1.length] !== "\n" && e.key === "Enter") {
       e.preventDefault();
-    } else if (codeSnippet[userInput.length] !== " " && e.key === " ") {
+    } else if (codeSnippet[userInputP1.length] !== " " && e.key === " ") {
       e.preventDefault();
     }
   };
@@ -188,7 +188,7 @@ const MultiCodeEditor = ({
                 className="absolute z-10 h-full w-full resize-none rounded-sm border border-gray-600 bg-transparent p-5 text-black text-opacity-0"
                 onChange={handleInputChange}
                 onKeyDown={handleKeyDown}
-                value={userInput}
+                value={userInputP1}
               />
             </div>
             <div>
@@ -207,4 +207,4 @@ const MultiCodeEditor = ({
   );
 };
 
-export default MultiCodeEditor;
+export default MultiCodeEditorP1;
