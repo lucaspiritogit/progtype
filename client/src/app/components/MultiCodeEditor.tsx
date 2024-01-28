@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import Timer from "./Timer";
 import io from "socket.io-client";
 
-const server  = process.env.websocketServer as string;
+const server  = process.env.WEBSOCKET_SERVER as string;
 
 const socket = io(server);
 
@@ -110,6 +110,44 @@ const MultiCodeEditor = ({
     }
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (codeSnippet[userInput.length] === "\t" && e.key !== "Tab") {
+      if (e.key !== "Backspace") {
+        e.preventDefault();
+      }
+    }
+
+    if (e.key === "Tab") {
+      e.preventDefault();
+
+      if (codeSnippet[userInput.length] !== "\t") {
+        e.preventDefault();
+      } else {
+        const { selectionStart, selectionEnd } = e.currentTarget;
+        const newInput =
+          userInput.substring(0, selectionStart) +
+          "\t" +
+          userInput.substring(selectionEnd);
+
+        setUserInput(newInput);
+
+        const newCursorPosition = selectionStart + 1;
+        inputRef.current!.setSelectionRange(
+          newCursorPosition,
+          newCursorPosition,
+        );
+      }
+    } else if (codeSnippet[userInput.length] === "\n" && e.key !== "Enter") {
+      if (e.key !== "Backspace") {
+        e.preventDefault();
+      }
+    } else if (codeSnippet[userInput.length] !== "\n" && e.key === "Enter") {
+      e.preventDefault();
+    } else if (codeSnippet[userInput.length] !== " " && e.key === " ") {
+      e.preventDefault();
+    }
+  };
+
   return (
     <div>
       {typingEnded ? (
@@ -145,6 +183,7 @@ const MultiCodeEditor = ({
                 ref={inputRef}
                 className="absolute z-10 h-full w-full resize-none rounded-sm border border-gray-600 bg-transparent p-5 text-black text-opacity-0"
                 onChange={handleInputChange}
+                onKeyDown={handleKeyDown}
                 value={userInput}
               />
             </div>

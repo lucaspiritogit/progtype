@@ -1,8 +1,4 @@
 /** @type {import('next').NextConfig} */
-const nextConfig = {
-  env: {
-    websocketServer: "http://localhost:3001",
-  }
-}
+const nextConfig = {}
 
 module.exports = nextConfig
