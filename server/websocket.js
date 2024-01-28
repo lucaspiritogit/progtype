@@ -9,6 +9,7 @@ const io = require("socket.io")(server, {
     origin: process.env.CORS_ORIGIN
   }
 });
+console.log(process.env.CORS_ORIGIN);
 const connections = new Set()
 
 io.on("connection", function(socket) {
