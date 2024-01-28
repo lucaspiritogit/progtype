@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import Timer from "./Timer";
 import io from "socket.io-client";
 
-const server  = process.env.WEBSOCKET_SERVER as string;
+const server = process.env.NEXT_PUBLIC_WEBSOCKET_SERVER as string;
 
 const socket = io(server);
 
