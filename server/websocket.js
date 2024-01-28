@@ -1,22 +1,31 @@
-const app = require("express")();
-const http = require("http").Server(app);
-const io = require("socket.io")(http);
-
-const connections = new Map()
+const express = require("express");
+const dotenv = require('dotenv');
+dotenv.config();
+const app = express();
+const PORT = process.env.PORT || 3001;
+const server = app.listen(PORT, ()=> console.log(`server on ${PORT}`))
+const io = require("socket.io")(server, {
+  cors: {
+    origin: process.env.CORS_ORIGIN
+  }
+});
+const connections = new Set()
 
 io.on("connection", function(socket) {
   console.log("New client connected " + socket.id);
-  connections.set(socket.id, socket.id)
+  connections.add(socket.id,)
 
   socket.on("type", function(data) {
-    const userId = connections.get(socket.id);
-    if (userId) {
-      console.log(userId + " typing");
       io.emit("type", data);
-    }
   });
-});
 
-http.listen(3001, function() {
-  console.log("listening on *:3001");
+  socket.on("join-room", function(roomId) {
+    socket.join(roomId)
+    console.log("Client: " + socket.id + " connected to room with id: " + roomId)
+  })
+
+  socket.on("disconnect", () => {
+    console.log("Client disconnected: " + socket.id)
+    connections.delete(socket.id)
+  })
 });
