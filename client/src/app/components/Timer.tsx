@@ -33,9 +33,9 @@ const Timer = ({ typingStarted, typingEnded, resetTimer }: TimerProps) => {
   }, [typingStarted, typingEnded, resetTimer]);
 
   return (
-    <p>
+    <h1 className="m-3 text-2xl">
       Total time: {timer.minutes}m {timer.seconds}s {timer.milliseconds}ms
-    </p>
+    </h1>
   );
 };
 

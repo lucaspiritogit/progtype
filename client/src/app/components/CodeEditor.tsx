@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import Timer from "./Timer";
+import TypingResults from "./TypingResults";
 
 type CodeEditorProps = {
   codeSnippet: string[];
@@ -22,7 +23,6 @@ const CodeEditor = ({
   const [correctChars, setCorrectChars] = useState(0);
   const [precision, setPrecision] = useState(100);
   const [resetTimer, setResetTimer] = useState(false);
-
 
   useEffect(() => {
     setUserInput("");
@@ -61,7 +61,7 @@ const CodeEditor = ({
       setTypingStarted(true);
     }
 
-    const cursorPosition = e.target.selectionStart;
+    // const cursorPosition = e.target.selectionStart;
     const typedValueByUser = e.target.value;
 
     setUserInput(typedValueByUser);
@@ -69,8 +69,7 @@ const CodeEditor = ({
     if (typedValueByUser.length === codeSnippet.length) {
       setTypingEnded(true);
     }
-
-    inputRef.current!.setSelectionRange(cursorPosition, cursorPosition);
+    // inputRef.current!.setSelectionRange(cursorPosition, cursorPosition);
   };
 
   const handleNextSnippetButton = () => {
@@ -96,7 +95,9 @@ const CodeEditor = ({
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (codeSnippet[userInput.length] === "\t" && e.key !== "Tab") {
+    let currentUserPosition = userInput.length;
+
+    if (codeSnippet[currentUserPosition] === "\t" && e.key !== "Tab") {
       if (e.key !== "Backspace") {
         e.preventDefault();
       }
@@ -143,46 +144,32 @@ const CodeEditor = ({
         />
       </div>
       {typingEnded ? (
-        <div className="flex w-full flex-col items-center">
-          <div className="z-49 absolute inset-0 opacity-50"></div>
-          <div className="relative z-50">
-            <p>Typing Ended!</p>
-            <p>Errors: {errors}</p>
-            <p>Correct Chars: {correctChars}</p>
-            <p>Precision: {precision.toFixed(2)}%</p>
-            <div className="resetButton" onClick={handleNextSnippetButton}>
-              <button>Next snippet</button>
-            </div>
-          </div>
-          <div>
-            <small>Press alt + tab to focus this button directly</small>
-          </div>
-        </div>
+        <TypingResults errors={errors} correctChars={correctChars} precision={precision} handleNextSnippetButton={handleNextSnippetButton}/>
       ) : (
         <>
-        <div className="relative flex justify-center h-[100vh] w-200 font-mono text-2xl m-5">
-          <div className="w-full">
-            <textarea
-              cols={100}
-              rows={10}
-              ref={inputRef}
-              className="absolute z-10 h-full w-full resize-none bg-transparent p-5 text-black text-opacity-0 border rounded-sm border-gray-600"
-              onChange={handleInputChange}
-              onKeyDown={handleKeyDown}
-              value={userInput}
+          <div className="w-200 relative m-5 flex h-[100vh] justify-center font-mono text-2xl">
+            <div className="w-full">
+              <textarea
+                cols={100}
+                rows={10}
+                ref={inputRef}
+                className="absolute z-10 h-full w-full resize-none rounded-sm border border-gray-600 bg-transparent p-5 text-black caret-slate-200 text-opacity-0"
+                onChange={handleInputChange}
+                onKeyDown={handleKeyDown}
+                value={userInput}
               />
+            </div>
+            <div>
+              <pre className="absolute left-0 top-0 z-0 w-full p-5">
+                {codeSnippet.map((char, index) => (
+                  <span key={index} className={colorCharByStatus(index, char)}>
+                    {char}
+                  </span>
+                ))}
+              </pre>
+            </div>
           </div>
-          <div>
-            <pre className="absolute left-0 top-0 z-0 w-full p-5">
-              {codeSnippet.map((char, index) => (
-                <span key={index} className={colorCharByStatus(index, char)}>
-                  {char}
-                </span>
-              ))}
-            </pre>
-          </div>
-        </div>
-              </>
+        </>
       )}
     </>
   );

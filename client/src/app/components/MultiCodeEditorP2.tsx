@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import Timer from "./Timer";
+import TypingResults from "./TypingResults";
 
 type CodeEditorProps = {
   codeSnippet: string[];
@@ -26,13 +27,10 @@ const MultiCodeEditorP2 = ({
   const [correctChars, setCorrectChars] = useState(0);
   const [precision, setPrecision] = useState(100);
   const [resetTimer, setResetTimer] = useState(false);
-  const [flushTimeout, setFlushTimeout] = useState<NodeJS.Timeout | null>(
-    null
-  );
-
+  const [flushTimeout, setFlushTimeout] = useState<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
-    socket.connect()
+    socket.connect();
     socket.on("receiveTypeValueP2", (message: any) => {
       setUserInput(message.value);
     });
@@ -96,7 +94,7 @@ const MultiCodeEditorP2 = ({
           roomId: roomId,
           userId: socket.id,
         });
-      }, 1000)
+      }, 1000),
     );
 
     inputRef.current!.setSelectionRange(cursorPosition, cursorPosition);
@@ -165,21 +163,12 @@ const MultiCodeEditorP2 = ({
   return (
     <div>
       {typingEnded ? (
-        <div className="flex w-full flex-col items-center">
-          <div className="z-49 absolute inset-0 opacity-50"></div>
-          <div className="relative z-50">
-            <p>Typing Ended!</p>
-            <p>Errors: {errors}</p>
-            <p>Correct Chars: {correctChars}</p>
-            <p>Precision: {precision.toFixed(2)}%</p>
-            <div className="resetButton" onClick={handleNextSnippetButton}>
-              <button>Next snippet</button>
-            </div>
-          </div>
-          <div>
-            <small>Press alt + tab to focus this button directly</small>
-          </div>
-        </div>
+        <TypingResults
+          errors={errors}
+          correctChars={correctChars}
+          precision={precision}
+          handleNextSnippetButton={handleNextSnippetButton}
+        />
       ) : (
         <>
           <div className="flex items-center justify-center">
