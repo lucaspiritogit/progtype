@@ -1,5 +1,7 @@
+"use client"
 import { useState } from "react";
 import io from "socket.io-client";
+import { useRouter } from 'next/navigation';
 
 const server  = process.env.NEXT_PUBLIC_WEBSOCKET_SERVER as string;
 const socket = io(server, {
@@ -10,8 +12,15 @@ const socket = io(server, {
 const JoinMultiRoom = ({ showJoinRoom, setShowJoinRoom, setRoomId, setSocket }: any) => {
   const [username, setUsername] = useState("");
   const [roomId, setRoom] = useState("");
+  const { push } = useRouter();
 
   const joinRoom = () => {
+
+    socket.on("room-full", (message: any) => {
+      alert("Lobby is full")
+      push("/")
+    })
+
     if (username !== "" && roomId !== "") {
       socket.emit("join-room", roomId);
       setSocket(socket)

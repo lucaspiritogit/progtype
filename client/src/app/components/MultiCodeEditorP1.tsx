@@ -27,6 +27,10 @@ const MultiCodeEditorP1 = ({
   const [correctChars, setCorrectChars] = useState(0);
   const [precision, setPrecision] = useState(100);
   const [resetTimer, setResetTimer] = useState(false);
+  const [flushTimeout, setFlushTimeout] = useState<NodeJS.Timeout | null>(
+    null
+  );
+
 
   useEffect(() => {
     socket.connect()
@@ -84,11 +88,19 @@ const MultiCodeEditorP1 = ({
       setTypingEnded(true);
     }
 
-    socket.emit("sendTypeValueP1", {
-      value: typedValueByUser,
-      roomId: roomId,
-      userId: socket.id,
-    });
+
+    if (flushTimeout) clearTimeout(flushTimeout);
+
+    setFlushTimeout(
+      setTimeout(() => {
+          socket.emit("sendTypeValueP1", {
+            value: typedValueByUser,
+            roomId: roomId,
+            userId: socket.id,
+          });
+      }, 400)
+    );
+
     inputRef.current!.setSelectionRange(cursorPosition, cursorPosition);
   };
 

@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef } from "react";
 import Timer from "./Timer";
-import io from "socket.io-client";
 
 type CodeEditorProps = {
   codeSnippet: string[];
@@ -12,7 +11,7 @@ type CodeEditorProps = {
 
 type ColorStatus = "correct" | "incorrect" | "not-reached";
 
-const MultiCodeEditor = ({
+const MultiCodeEditorP2 = ({
   codeSnippet,
   onNextSnippet,
   selectedLanguage,
@@ -27,15 +26,19 @@ const MultiCodeEditor = ({
   const [correctChars, setCorrectChars] = useState(0);
   const [precision, setPrecision] = useState(100);
   const [resetTimer, setResetTimer] = useState(false);
+  const [flushTimeout, setFlushTimeout] = useState<NodeJS.Timeout | null>(
+    null
+  );
+
 
   useEffect(() => {
     socket.connect()
-    socket.on("receiveTypeValue", (message: any) => {
+    socket.on("receiveTypeValueP2", (message: any) => {
       setUserInput(message.value);
     });
 
     return () => {
-      socket.off("receiveTypeValue");
+      socket.off("receiveTypeValueP2");
     };
   }, [socket]);
 
@@ -84,11 +87,18 @@ const MultiCodeEditor = ({
       setTypingEnded(true);
     }
 
-    socket.emit("sendTypeValue", {
-      value: typedValueByUser,
-      roomId: roomId,
-      userId: socket.id,
-    });
+    if (flushTimeout) clearTimeout(flushTimeout);
+
+    setFlushTimeout(
+      setTimeout(() => {
+        socket.emit("sendTypeValueP2", {
+          value: typedValueByUser,
+          roomId: roomId,
+          userId: socket.id,
+        });
+      }, 1000)
+    );
+
     inputRef.current!.setSelectionRange(cursorPosition, cursorPosition);
   };
 
@@ -207,4 +217,4 @@ const MultiCodeEditor = ({
   );
 };
 
-export default MultiCodeEditor;
+export default MultiCodeEditorP2;

@@ -55,7 +55,7 @@ export default function Home() {
           </label>
           <div>
             <select
-              className="m-3 text-black"
+              className="m-3 p-2 rounded text-black"
               name="lang"
               id="lang"
               value={selectedLanguage}

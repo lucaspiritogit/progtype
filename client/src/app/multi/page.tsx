@@ -1,7 +1,7 @@
 "use client";
 import { useState, useMemo, useEffect } from "react";
 import CodeEditor from "../components/CodeEditor";
-import MultiCodeEditor from "../components/MultiCodeEditor";
+import MultiCodeEditorP2 from "../components/MultiCodeEditorP2";
 import MultiCodeEditorP1 from "../components/MultiCodeEditorP1";
 import { snippets } from "../../../public/codeSnippets";
 import JoinMultiRoom from "../components/JoinMultiRoom";
@@ -12,7 +12,6 @@ export default function Home() {
   const [showJoinRoom, setShowJoinRoom] = useState(true)
   const [roomId, setRoomId] = useState("");
   const [socket, setSocket] = useState(null);
-  const [isPlayer1, setIsPlayer1] = useState(false);
 
 
   const handleLanguageChange = (e: any) => {
@@ -90,7 +89,7 @@ export default function Home() {
               />
             </div>
             <div className="w-[50%]">
-              <MultiCodeEditor
+              <MultiCodeEditorP2
                 codeSnippet={codeSpacesReplacedWithTabs.split("")}
                 onNextSnippet={handleNextSnippet}
                 selectedLanguage={selectedLanguage}
