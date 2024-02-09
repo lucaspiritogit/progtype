@@ -13,15 +13,24 @@ const connections = new Set()
 
 io.on("connection", function(socket) {
   console.log("New client connected " + socket.id);
-  connections.add(socket.id,)
+  connections.add(socket.id)
 
   socket.on("join-room", function(roomId) {
     socket.join(roomId)
-    console.log("Client: " + socket.id + " connected to room with id: " + roomId)
+    const room = io.sockets.adapter.rooms.get(roomId);
+
+    if (room.size > 2) {
+      socket.emit("room-full", { roomId });
+      socket.disconnect()
+    } else {
+      socket.join(roomId);
+      console.log("Client: " + socket.id + " connected to room with id: " + roomId);
+    }
+
   })
 
-  socket.on("sendTypeValue", function(data) {
-      io.to(data.roomId).emit("receiveTypeValue", data);
+  socket.on("sendTypeValueP2", function(data) {
+      io.to(data.roomId).emit("receiveTypeValueP2", data);
 
     });
 
