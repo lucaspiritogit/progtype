@@ -98,7 +98,7 @@ const MultiCodeEditorP1 = ({
             roomId: roomId,
             userId: socket.id,
           });
-      }, 400)
+      }, 700)
     );
 
     inputRef.current!.setSelectionRange(cursorPosition, cursorPosition);
